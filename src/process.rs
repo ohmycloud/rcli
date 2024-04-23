@@ -19,6 +19,7 @@ pub fn process_csv(
     let content = match format {
         OutputFormat::Json => serde_json::to_string_pretty(&ret)?,
         OutputFormat::Yaml => serde_yaml::to_string(&ret)?,
+        OutputFormat::Toml => toml::to_string_pretty(&ret)?,
     };
 
     fs::write(output_path, content)?;

@@ -21,6 +21,7 @@ impl From<OutputFormat> for &'static str {
         match format {
             OutputFormat::Json => "json",
             OutputFormat::Yaml => "yaml",
+            OutputFormat::Toml => "toml",
         }
     }
 }
@@ -32,6 +33,7 @@ impl FromStr for OutputFormat {
         match format {
             "json" => Ok(OutputFormat::Json),
             "yaml" => Ok(OutputFormat::Yaml),
+            "toml" => Ok(OutputFormat::Toml),
             _ => anyhow::bail!("Unsupported format: {}", format),
         }
     }
@@ -47,6 +49,7 @@ impl fmt::Display for OutputFormat {
 pub enum OutputFormat {
     Json,
     Yaml,
+    Toml,
 }
 
 #[derive(Debug, Parser)]
