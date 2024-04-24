@@ -4,12 +4,16 @@ use base64::prelude::*;
 use std::fs::File;
 use std::io::Read;
 
-pub fn process_encode(input: String, format: Base64Format) -> anyhow::Result<()> {
-    let mut reader: Box<dyn Read> = if input == "-" {
+fn input_reader(input: String) -> anyhow::Result<Box<dyn Read>> {
+    let reader: Box<dyn Read> = if input == "-" {
         Box::new(std::io::stdin())
     } else {
         Box::new(File::open(input)?)
     };
+    Ok(reader)
+}
+pub fn process_encode(input: String, format: Base64Format) -> anyhow::Result<()> {
+    let mut reader = input_reader(input)?;
     let mut buf = Vec::new();
     reader.read_to_end(&mut buf)?;
 
@@ -22,13 +26,10 @@ pub fn process_encode(input: String, format: Base64Format) -> anyhow::Result<()>
 }
 
 pub fn process_decode(input: String, format: Base64Format) -> anyhow::Result<()> {
-    let mut reader: Box<dyn Read> = if input == "-" {
-        Box::new(std::io::stdin())
-    } else {
-        Box::new(File::open(input)?)
-    };
+    let mut reader = input_reader(input)?;
     let mut buf = String::new();
     reader.read_to_string(&mut buf)?;
+    // avoid accident newline
     let buf = buf.trim();
 
     let decoded = match format {
