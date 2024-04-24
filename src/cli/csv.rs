@@ -1,16 +1,8 @@
+use super::verify_input_file;
 use clap::Parser;
 use std::fmt;
 use std::fmt::Formatter;
 use std::str::FromStr;
-
-// 检查输入路径是否存在
-fn verify_input_file(input_path: &str) -> Result<String, String> {
-    if std::path::Path::new(input_path).exists() {
-        Ok(input_path.into())
-    } else {
-        Err(format!("{} doesn't exist", input_path))
-    }
-}
 
 fn parse_format(format: &str) -> Result<OutputFormat, anyhow::Error> {
     format.parse()
