@@ -1,3 +1,2 @@
-mod opts;
+pub mod cli;
 pub mod process;
-pub use opts::{Opts, SubCommand};
