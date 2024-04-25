@@ -1,4 +1,5 @@
 use clap::Parser;
+use rcli::cli::text::TextSubCommand;
 use rcli::cli::Base64SubCommand;
 use rcli::process::{process_decode, process_encode};
 use rcli::{cli::Opts, cli::SubCommand, process::process_csv, process::process_genpass};
@@ -35,6 +36,16 @@ fn main() -> anyhow::Result<()> {
             }
             Base64SubCommand::Decode(opts) => {
                 process_decode(opts.input, opts.format)?;
+                Ok(())
+            }
+        },
+        SubCommand::Text(subcmd) => match subcmd {
+            TextSubCommand::Sign(opts) => {
+                println!("{:?}", opts);
+                Ok(())
+            }
+            TextSubCommand::Verify(opts) => {
+                println!("{:?}", opts);
                 Ok(())
             }
         },

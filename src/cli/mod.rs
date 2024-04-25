@@ -1,9 +1,14 @@
 mod base64;
 pub mod csv;
-mod genpass;
+pub mod genpass;
+pub mod text;
 
-pub use self::{base64::Base64Format, base64::Base64SubCommand, csv::OutputFormat};
+pub use self::{
+    base64::Base64Format, base64::Base64SubCommand, csv::OutputFormat, text::TextSignFormat,
+    text::TextSignOpts,
+};
 use self::{csv::CsvOpts, genpass::GenPassOpts};
+use crate::cli::text::TextSubCommand;
 use clap::Parser;
 
 // 检查输入路径是否存在
@@ -23,6 +28,8 @@ pub enum SubCommand {
     GenPass(GenPassOpts),
     #[command(subcommand)]
     Base64(Base64SubCommand),
+    #[command(subcommand)]
+    Text(TextSubCommand),
 }
 
 #[derive(Debug, Parser)]
