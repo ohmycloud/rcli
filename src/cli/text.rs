@@ -1,7 +1,8 @@
-use super::verify_input_file;
+use super::{verify_file, verify_path};
 use clap::Parser;
 use std::fmt;
 use std::fmt::Formatter;
+use std::path::PathBuf;
 use std::str::FromStr;
 
 #[derive(Debug, Parser)]
@@ -10,26 +11,38 @@ pub enum TextSubCommand {
     Sign(TextSignOpts),
     #[command(about = "Verify a signed message")]
     Verify(TextVerifyOpts),
+    #[command(about = "Generate a new key")]
+    Generate(TextKeyGenerateOpts),
 }
 
 #[derive(Debug, Parser)]
 pub struct TextSignOpts {
-    #[arg(short, long, value_parser = verify_input_file, default_value = "-")]
+    #[arg(short, long, value_parser = verify_file, default_value = "-")]
     pub input: String,
-    #[arg(short, long, value_parser = verify_input_file, default_value = "-")]
+    #[arg(short, long, value_parser = verify_file)]
     pub key: String,
     #[arg(long, value_parser = parse_format, default_value = "blake3")]
-    pub format: String,
+    pub format: TextSignFormat,
 }
 
 #[derive(Debug, Parser)]
 pub struct TextVerifyOpts {
-    #[arg(short, long, value_parser = verify_input_file, default_value = "-")]
+    #[arg(short, long, value_parser = verify_file, default_value = "-")]
     pub input: String,
-    #[arg(short, long, value_parser = verify_input_file, default_value = "-")]
+    #[arg(short, long, value_parser = verify_file)]
     pub key: String,
+    #[arg(long, value_parser = parse_format, default_value = "blake3")]
+    pub format: TextSignFormat,
     #[arg(short, long)]
     pub sig: String,
+}
+
+#[derive(Debug, Parser)]
+pub struct TextKeyGenerateOpts {
+    #[arg(short, long, default_value = "blake3", value_parser = parse_format)]
+    pub format: TextSignFormat,
+    #[arg(short, long, value_parser = verify_path)]
+    pub output: PathBuf,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -62,8 +75,8 @@ impl FromStr for TextSignFormat {
 
     fn from_str(format: &str) -> Result<Self, Self::Err> {
         match format {
-            "json" => Ok(TextSignFormat::Blake3),
-            "yaml" => Ok(TextSignFormat::Ed25519),
+            "blake3" => Ok(TextSignFormat::Blake3),
+            "ed25519" => Ok(TextSignFormat::Ed25519),
             _ => anyhow::bail!("Unsupported format: {}", format),
         }
     }
